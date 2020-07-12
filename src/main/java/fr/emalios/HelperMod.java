@@ -1,41 +1,14 @@
 package fr.emalios;
 
-import mezz.jei.api.gui.IRecipeLayout;
-import mezz.jei.api.ingredients.IIngredientType;
-import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.runtime.IRecipesGui;
-import mezz.jei.gui.ingredients.GuiIngredient;
-import mezz.jei.gui.recipes.RecipeGuiLogic;
 import mezz.jei.gui.recipes.RecipeLayout;
 import mezz.jei.gui.recipes.RecipesGui;
-import mezz.jei.input.IClickedIngredient;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.gui.recipebook.RecipeOverlayGui;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.IRecipeHolder;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipe;
-import net.minecraft.tags.Tag;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraftforge.client.event.GuiContainerEvent;
-import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.crafting.IRecipeContainer;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
@@ -48,13 +21,12 @@ import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Field;
 import java.util.List;
-import java.util.stream.Collectors;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("helpermod")
 public class HelperMod {
 
-    private StringRecipes stringRecipes;
+    private final StringRecipes stringRecipes;
 
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
@@ -75,9 +47,6 @@ public class HelperMod {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        // some preinit code
-        LOGGER.info("HELLO FROM PREINIT");
-        LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
@@ -86,34 +55,23 @@ public class HelperMod {
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
-        // some example code to dispatch IMC to another mod
-        InterModComms.sendTo("helpermod", "helloworld", () -> {
-            LOGGER.info("Hello world from the MDK");
-            return "Hello world";
-        });
     }
 
     private void processIMC(final InterModProcessEvent event) {
-        // some example code to receive and process InterModComms from other mods
-        LOGGER.info("Got IMC {}", event.getIMCStream().
-                map(m -> m.getMessageSupplier().get()).
-                collect(Collectors.toList()));
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(FMLServerStartingEvent event) {
         // do something when the server starts
-        LOGGER.info("HELLO from server starting");
+        LOGGER.info("CtHelperModLoading...");
     }
 
     @SubscribeEvent
-    public void onMouseClickEvent(GuiScreenEvent.MouseClickedEvent event) {
-        System.out.println("KAPPA");
+    public void onMouseClickEvent(GuiScreenEvent.MouseClickedEvent.Post event) {
         Screen gui = event.getGui();
         if (!(gui instanceof RecipesGui))
             return;
-        System.out.println("instance of recipevctudsifsess gui");
         RecipesGui recipesGui = (RecipesGui) gui;
         try {
             Field field = FieldUtils.getField(recipesGui.getClass(), "recipeLayouts", true);
@@ -135,10 +93,12 @@ public class HelperMod {
             ShapedRecipe shapedRecipe = (ShapedRecipe) recipe;
 
             StringRecipe stringRecipe = new StringRecipe();
-            stringRecipe.setOutput(new StringItemStack(shapedRecipe.getRecipeOutput()));
+            stringRecipe.setOutput(shapedRecipe.getRecipeOutput());
             for (Ingredient ingredient : shapedRecipe.getIngredients()) {
-                System.out.println(ingredient.serialize().toString());
+                stringRecipe.addIngredients(ingredient);
             }
+            this.stringRecipes.addRecipe(stringRecipe);
+            System.out.println(this.stringRecipes);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }

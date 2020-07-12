@@ -1,32 +1,42 @@
 package fr.emalios;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class StringRecipe {
 
-    private final List<StringItemStack> ingredients;
-    private StringItemStack output;
+    private final List<StringIngredient> ingredients;
+    private StringIngredient output;
+    private String recipeName;
 
     public StringRecipe() {
         this.ingredients = new ArrayList<>();
     }
 
-    public void addIngredients(StringItemStack ingredient) {
-        this.ingredients.add(ingredient);
+    public void addIngredients(Ingredient ingredient) {
+        this.ingredients.add(new StringIngredient(ingredient));
     }
 
-    public void setOutput(StringItemStack output) {
-        this.output = output;
+    public void setOutput(ItemStack output) {
+        if(output.getItem().getRegistryName() == null){
+            this.recipeName = "null";
+            return;
+        }
+        this.recipeName = output.getItem().getRegistryName().getPath();
+        this.output = new StringIngredient(output);
     }
 
     @Override
     public String toString() {
-        String initLine = "craftingTable.addShaped(" + this.output.getRecipeName() + ", " + this.output + ", [";
+        String beforeLine = "//"+this.recipeName;
+        String initLine = "craftingTable.addShaped(\"" + this.recipeName + "\", " + this.output + ", [";
         String firstLine = this.getFirstLine();
         String secondLine = this.getSecondLine();
         String thirdLine = this.getThirdLine();
-        return String.format("%s\n%s\n%s\n%s", initLine, firstLine, secondLine, thirdLine);
+        return String.format("%s\n%s\n%s\n%s\n%s", beforeLine, initLine, firstLine, secondLine, thirdLine);
     }
 
     private String getThirdLine() {

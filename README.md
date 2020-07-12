@@ -1,0 +1,2 @@
+# CtHelperMod
+AUTO COPY DON'T WORK WITH LINUX

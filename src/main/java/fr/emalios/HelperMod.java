@@ -1,10 +1,13 @@
 package fr.emalios;
 
+import fr.emalios.config.PlayersConfig;
+import fr.emalios.recipe.Recipes;
+import fr.emalios.recipe.shapedrecipe.ShapedRecipe;
 import mezz.jei.gui.recipes.RecipeLayout;
 import mezz.jei.gui.recipes.RecipesGui;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapedRecipe;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -16,60 +19,58 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod("helpermod")
 public class HelperMod {
 
-    private final StringRecipes stringRecipes;
+    private final Recipes recipes;
+    private final PlayersConfig playersConfig;
 
-    // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
 
     public HelperMod() {
-        this.stringRecipes = new StringRecipes();
-        // Register the setup method for modloading
+        this.recipes = new Recipes();
+        this.playersConfig = new PlayersConfig();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        // Register the enqueueIMC method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
-        // Register the processIMC method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
-        // Register the doClientStuff method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
 
-        // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    private void setup(final FMLCommonSetupEvent event) {
-    }
+    private void setup(final FMLCommonSetupEvent event) {}
 
     private void doClientStuff(final FMLClientSetupEvent event) {
-        // do something that can only be done on the client
         LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
     }
 
-    private void enqueueIMC(final InterModEnqueueEvent event) {
-    }
+    private void enqueueIMC(final InterModEnqueueEvent event) {}
 
-    private void processIMC(final InterModProcessEvent event) {
-    }
+    private void processIMC(final InterModProcessEvent event) {}
 
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(FMLServerStartingEvent event) {
-        // do something when the server starts
         LOGGER.info("CtHelperModLoading...");
+        event.getCommandDispatcher();
     }
 
     @SubscribeEvent
-    public void onMouseClickEvent(GuiScreenEvent.MouseClickedEvent.Post event) {
+    public void onMouseClickEvent(GuiScreenEvent.MouseClickedEvent.Pre event) {
         Screen gui = event.getGui();
+        PlayerEntity playerEntity = gui.getMinecraft().player;
+        if(playerEntity == null) {
+            System.out.println("PLAYER NULL");
+            return;
+        }
+        if(!this.playersConfig.getPlayerConfig(playerEntity).modActivated)
+            return;
         if (!(gui instanceof RecipesGui))
             return;
         RecipesGui recipesGui = (RecipesGui) gui;
@@ -78,7 +79,6 @@ public class HelperMod {
             List<RecipeLayout> layouts = (List<RecipeLayout>) field.get(recipesGui);
             if (layouts == null)
                 return;
-            System.out.println(layouts.toString() + "\n" + "Size : " + layouts.size());
             RecipeLayout layout = layouts.get(0);
             field = FieldUtils.getField(layout.getClass(), "recipe", true);
             Object recipe = field.get(layout);
@@ -86,22 +86,29 @@ public class HelperMod {
                 System.out.println("recipe null");
                 return;
             }
-            if (!(recipe instanceof ShapedRecipe)) {
-                System.out.println("don't instanceof shaped recipe");
-                return;
+            if (recipe instanceof net.minecraft.item.crafting.ShapedRecipe) {
+                processWithShapedRecipe(recipe);
             }
-            ShapedRecipe shapedRecipe = (ShapedRecipe) recipe;
 
-            StringRecipe stringRecipe = new StringRecipe();
-            stringRecipe.setOutput(shapedRecipe.getRecipeOutput());
-            for (Ingredient ingredient : shapedRecipe.getIngredients()) {
-                stringRecipe.addIngredients(ingredient);
-            }
-            this.stringRecipes.addRecipe(stringRecipe);
-            System.out.println(this.stringRecipes);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    private void processWithShapedRecipe(Object recipe) {
+        net.minecraft.item.crafting.ShapedRecipe shapedRecipe = (net.minecraft.item.crafting.ShapedRecipe) recipe;
+        ShapedRecipe stringShapedRecipe = new ShapedRecipe();
+        stringShapedRecipe.setOutput(shapedRecipe.getRecipeOutput());
+        LOGGER.log(Level.DEBUG, "GROUP : " + shapedRecipe.getGroup() + "\nSIZE : " + shapedRecipe.getIngredients().size());
+        for (Ingredient ingredient : shapedRecipe.getIngredients()) {
+            if(ingredient.serialize().toString().equals("[]")) {
+                stringShapedRecipe.addIngredients("<item:minecraft:air>");
+                continue;
+            }
+            stringShapedRecipe.addIngredients(ingredient);
+        }
+        this.recipes.addRecipe(stringShapedRecipe);
+        System.out.println(this.recipes);
     }
 }
 

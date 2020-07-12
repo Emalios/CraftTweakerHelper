@@ -1,4 +1,4 @@
-package fr.emalios;
+package fr.emalios.ingredient;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -13,6 +13,9 @@ public class StringIngredient {
 
     public StringIngredient(Ingredient ingredient) {
         this.string = ingredient.serialize().toString().replace("{", "<").replace("}", ">").replace("\"", "");
+    }
+    public StringIngredient(String ingredient) {
+        this.string = ingredient;
     }
 
     @Override

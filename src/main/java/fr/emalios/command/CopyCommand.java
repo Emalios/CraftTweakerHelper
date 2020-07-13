@@ -6,7 +6,13 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.emalios.recipe.PlayersRecipes;
 import fr.emalios.recipe.Recipes;
 import net.minecraft.command.CommandSource;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponent;
+import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.util.text.event.HoverEvent;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -24,11 +30,13 @@ public class CopyCommand {
         dispatcher.register(LiteralArgumentBuilder.<CommandSource>literal("cth")
                 .then(LiteralArgumentBuilder.<CommandSource>literal("copy")
                         .executes(context -> {
-                            StringSelection selection = new StringSelection(this.playersRecipes.getPlayerStringRecipes(context.getSource().asPlayer()));
-                            System.out.println("TOCOPY : \n" + this.playersRecipes.toString());
-                            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                            clipboard.setContents(selection, null);
-                            context.getSource().asPlayer().sendMessage(new StringTextComponent("§7You have been copy recipes"));
+                            ServerPlayerEntity playerEntity = context.getSource().asPlayer();
+                            TextComponent textComponent = new StringTextComponent("§7Click here to copy");
+                            Style style = new Style();
+                            style.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, this.playersRecipes.getPlayerStringRecipes(playerEntity)));
+                            style.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("§ccopy zenscript")));
+                            textComponent.setStyle(style);
+                            playerEntity.sendMessage(textComponent);
                             return 1;
                         })
                 )
@@ -37,13 +45,12 @@ public class CopyCommand {
 
     public static void main(String[] args) {
 
-        String str = "String destined for clipboard\nvyuevrever";
+        String str = "//bookshelf\ncraftingTable.addShaped(\"bookshelf\", <item:minecraft:bookshelf>, [\n[<tag:minecraft:planks>, <tag:minecraft:planks>, <tag:minecraft:planks>],\n[<item:minecraft:book>, <item:minecraft:book>, <item:minecraft:book>],\n[<tag:minecraft:planks>, <tag:minecraft:planks>, <tag:minecraft:planks>]]);\n\n";
 
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Clipboard clipboard = toolkit.getSystemClipboard();
         StringSelection strSel = new StringSelection(str);
         clipboard.setContents(strSel, null);
-
     }
 
 }

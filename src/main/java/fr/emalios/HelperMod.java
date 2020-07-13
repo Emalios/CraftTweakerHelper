@@ -73,10 +73,8 @@ public class HelperMod {
     public void onMouseClickEvent(GuiScreenEvent.MouseClickedEvent.Pre event) {
         Screen gui = event.getGui();
         PlayerEntity playerEntity = gui.getMinecraft().player;
-        if(playerEntity == null) {
-            System.out.println("PLAYER NULL");
+        if(playerEntity == null)
             return;
-        }
         if(!this.playersConfig.getPlayerConfig(playerEntity).modActivated)
             return;
         if (!(gui instanceof RecipesGui))
@@ -106,7 +104,6 @@ public class HelperMod {
         net.minecraft.item.crafting.ShapedRecipe shapedRecipe = (net.minecraft.item.crafting.ShapedRecipe) recipe;
         ShapedRecipe stringShapedRecipe = new ShapedRecipe();
         stringShapedRecipe.setOutput(shapedRecipe.getRecipeOutput());
-        LOGGER.log(Level.DEBUG, "GROUP : " + shapedRecipe.getGroup() + "\nSIZE : " + shapedRecipe.getIngredients().size());
         for (Ingredient ingredient : shapedRecipe.getIngredients()) {
             if(ingredient.serialize().toString().equals("[]")) {
                 stringShapedRecipe.addIngredients("<item:minecraft:air>");

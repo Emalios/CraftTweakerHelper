@@ -13,7 +13,7 @@ import java.awt.datatransfer.StringSelection;
 
 public class DisplayCommand {
 
-    private PlayersRecipes playersRecipes;
+    private final PlayersRecipes playersRecipes;
 
     public DisplayCommand(PlayersRecipes playersRecipes) {
         this.playersRecipes = playersRecipes;

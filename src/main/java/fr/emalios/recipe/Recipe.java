@@ -10,20 +10,16 @@ import java.util.Objects;
 
 public class Recipe {
 
-    protected final List<StringIngredient> ingredients;
+    protected final List<RecipeLine> recipeLines;
     protected StringIngredient output;
     protected String recipeName;
 
     public Recipe() {
-        this.ingredients = new ArrayList<>();
+        this.recipeLines = new ArrayList<>();
     }
 
-    public void addIngredients(Ingredient ingredient) {
-        this.ingredients.add(new StringIngredient(ingredient));
-    }
-
-    public void addIngredients(String ingredient) {
-        this.ingredients.add(new StringIngredient(ingredient));
+    public void addRecipeLine(RecipeLine recipeLine) {
+        this.recipeLines.add(recipeLine);
     }
 
     public void setOutput(ItemStack output) {

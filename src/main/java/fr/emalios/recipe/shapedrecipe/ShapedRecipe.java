@@ -10,25 +10,17 @@ public class ShapedRecipe extends Recipe {
 
     @Override
     public String toString() {
-        if(this.ingredients.size() < 9)
-            return "null, <9";
         String beforeLine = "//"+this.recipeName;
         String initLine = "craftingTable.addShaped(\"" + this.recipeName + "\", " + this.output + ", [";
-        String firstLine = this.getFirstLine();
-        String secondLine = this.getSecondLine();
-        String thirdLine = this.getThirdLine();
-        return String.format("%s\n%s\n%s\n%s\n%s\n", beforeLine, initLine, firstLine, secondLine, thirdLine);
+        StringBuilder builder = new StringBuilder(beforeLine).append("\n").append(initLine).append("\n");
+        for (int i = 0; i < super.recipeLines.size(); i++) {
+            if(i == super.recipeLines.size()-1) {
+                builder.append(super.recipeLines.get(i)).append("]\n");
+                continue;
+            }
+            builder.append(super.recipeLines.get(i)).append(",\n");
+        }
+        return builder.toString();
     }
 
-    private String getThirdLine() {
-        return String.format("[%s, %s, %s]]);", this.ingredients.get(6), this.ingredients.get(7), this.ingredients.get(8));
-    }
-
-    private String getSecondLine() {
-        return String.format("[%s, %s, %s],", this.ingredients.get(3), this.ingredients.get(4), this.ingredients.get(5));
-    }
-
-    private String getFirstLine() {
-        return String.format("[%s, %s, %s],", this.ingredients.get(0), this.ingredients.get(1), this.ingredients.get(2));
-    }
 }

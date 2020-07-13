@@ -6,6 +6,7 @@ import fr.emalios.command.CopyCommand;
 import fr.emalios.command.DisplayCommand;
 import fr.emalios.config.PlayersConfig;
 import fr.emalios.recipe.PlayersRecipes;
+import fr.emalios.recipe.RecipeLine;
 import fr.emalios.recipe.Recipes;
 import fr.emalios.recipe.shapedrecipe.ShapedRecipe;
 import mezz.jei.gui.recipes.RecipeLayout;
@@ -13,6 +14,7 @@ import mezz.jei.gui.recipes.RecipesGui;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -104,13 +106,32 @@ public class HelperMod {
         net.minecraft.item.crafting.ShapedRecipe shapedRecipe = (net.minecraft.item.crafting.ShapedRecipe) recipe;
         ShapedRecipe stringShapedRecipe = new ShapedRecipe();
         stringShapedRecipe.setOutput(shapedRecipe.getRecipeOutput());
-        for (Ingredient ingredient : shapedRecipe.getIngredients()) {
-            if(ingredient.serialize().toString().equals("[]")) {
-                stringShapedRecipe.addIngredients("<item:minecraft:air>");
-                continue;
-            }
-            stringShapedRecipe.addIngredients(ingredient);
-        }
+        processThing(shapedRecipe, stringShapedRecipe);
         this.playersRecipes.addRecipeToPlayer(playerEntity, stringShapedRecipe);
+    }
+
+    private void processThing(net.minecraft.item.crafting.ShapedRecipe shapedRecipe, ShapedRecipe stringShapedRecipe) {
+        NonNullList<Ingredient> list = shapedRecipe.getIngredients();
+        int numberOfLines = shapedRecipe.getRecipeHeight();
+        int numberOfColumn = shapedRecipe.getRecipeWidth();
+        for (int i = 0; i < numberOfLines; i++) {
+            RecipeLine recipeLine = new RecipeLine();
+            for (int j = 0; j < numberOfColumn; j++) {
+                int index = j + numberOfColumn*i;
+                if(isEmpty(index, list)) {
+                    recipeLine.addIngredient("<item:minecraft:air>");
+                    continue;
+                }
+                recipeLine.addIngredient(list.get(index));
+            }
+            stringShapedRecipe.addRecipeLine(recipeLine);
+        }
+    }
+
+    private boolean isEmpty(int index, NonNullList<Ingredient> list) {
+        if(list.size() <= index)
+            return true;
+        Ingredient ingredient = list.get(index);
+        return ingredient.serialize().toString().equals("[]");
     }
 }

@@ -48,14 +48,4 @@ public class CopyCommand {
         );
     }
 
-    public static void main(String[] args) {
-
-        String str = "//bookshelf\ncraftingTable.addShaped(\"bookshelf\", <item:minecraft:bookshelf>, [\n[<tag:minecraft:planks>, <tag:minecraft:planks>, <tag:minecraft:planks>],\n[<item:minecraft:book>, <item:minecraft:book>, <item:minecraft:book>],\n[<tag:minecraft:planks>, <tag:minecraft:planks>, <tag:minecraft:planks>]]);\n\n";
-
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Clipboard clipboard = toolkit.getSystemClipboard();
-        StringSelection strSel = new StringSelection(str);
-        clipboard.setContents(strSel, null);
-    }
-
 }

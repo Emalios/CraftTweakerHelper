@@ -15,6 +15,8 @@ public class PlayersRecipes {
     }
 
     public String getPlayerStringRecipes(PlayerEntity playerEntity) {
+        if(!this.playerRecipes.containsKey(playerEntity.getUniqueID()))
+            return null;
         return this.playerRecipes.get(playerEntity.getUniqueID()).toString();
     }
 

@@ -33,7 +33,12 @@ public class CopyCommand {
                             ServerPlayerEntity playerEntity = context.getSource().asPlayer();
                             TextComponent textComponent = new StringTextComponent("§7Click here to copy");
                             Style style = new Style();
-                            style.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, this.playersRecipes.getPlayerStringRecipes(playerEntity)));
+                            String stringRecipe = this.playersRecipes.getPlayerStringRecipes(playerEntity);
+                            if(stringRecipe == null) {
+                                playerEntity.sendMessage(new StringTextComponent("§7You don't have any recipe save !"));
+                                return 1;
+                            }
+                            style.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, stringRecipe));
                             style.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("§ccopy zenscript")));
                             textComponent.setStyle(style);
                             playerEntity.sendMessage(textComponent);

@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class PlayersConfig {
 
-    private Map<UUID, Config> playersConfig;
+    private final Map<UUID, Config> playersConfig;
 
     public PlayersConfig() {
         this.playersConfig = new HashMap<>();

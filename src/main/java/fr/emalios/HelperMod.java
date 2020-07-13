@@ -1,6 +1,11 @@
 package fr.emalios;
 
+import fr.emalios.command.ClearCommand;
+import fr.emalios.command.ConfigCommand;
+import fr.emalios.command.CopyCommand;
+import fr.emalios.command.DisplayCommand;
 import fr.emalios.config.PlayersConfig;
+import fr.emalios.recipe.PlayersRecipes;
 import fr.emalios.recipe.Recipes;
 import fr.emalios.recipe.shapedrecipe.ShapedRecipe;
 import mezz.jei.gui.recipes.RecipeLayout;
@@ -29,13 +34,13 @@ import java.util.List;
 @Mod("helpermod")
 public class HelperMod {
 
-    private final Recipes recipes;
+    private final PlayersRecipes playersRecipes;
     private final PlayersConfig playersConfig;
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     public HelperMod() {
-        this.recipes = new Recipes();
+        this.playersRecipes = new PlayersRecipes();
         this.playersConfig = new PlayersConfig();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
@@ -58,7 +63,10 @@ public class HelperMod {
     @SubscribeEvent
     public void onServerStarting(FMLServerStartingEvent event) {
         LOGGER.info("CtHelperModLoading...");
-        event.getCommandDispatcher();
+        new ConfigCommand(this.playersConfig).register(event.getCommandDispatcher());
+        new CopyCommand(this.playersRecipes).register(event.getCommandDispatcher());
+        new ClearCommand(this.playersRecipes).register(event.getCommandDispatcher());
+        new DisplayCommand(this.playersRecipes).register(event.getCommandDispatcher());
     }
 
     @SubscribeEvent
@@ -87,15 +95,14 @@ public class HelperMod {
                 return;
             }
             if (recipe instanceof net.minecraft.item.crafting.ShapedRecipe) {
-                processWithShapedRecipe(recipe);
+                processWithShapedRecipe(playerEntity, recipe);
             }
-
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
-    private void processWithShapedRecipe(Object recipe) {
+    private void processWithShapedRecipe(PlayerEntity playerEntity, Object recipe) {
         net.minecraft.item.crafting.ShapedRecipe shapedRecipe = (net.minecraft.item.crafting.ShapedRecipe) recipe;
         ShapedRecipe stringShapedRecipe = new ShapedRecipe();
         stringShapedRecipe.setOutput(shapedRecipe.getRecipeOutput());
@@ -107,36 +114,6 @@ public class HelperMod {
             }
             stringShapedRecipe.addIngredients(ingredient);
         }
-        this.recipes.addRecipe(stringShapedRecipe);
-        System.out.println(this.recipes);
+        this.playersRecipes.addRecipeToPlayer(playerEntity, stringShapedRecipe);
     }
 }
-
-    /*
-    // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
-    // Event bus for receiving Registry Events)
-    @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
-    public static class RegistryEvents {
-        @SubscribeEvent
-        public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
-            // register a new block here
-            LOGGER.info("HELLO from Register Block");
-        }
-    }
-
-     */
-
-                    /*
-            for (GuiIngredient<ItemStack> value : layout.getItemStacks().getGuiIngredients().values()) {
-                if(value.getDisplayedIngredient() == null)
-                    continue;
-                if(value.getDisplayedIngredient().getItem().getRegistryName() == null)
-                    continue;
-                System.out.println(value.getAllIngredients());
-                System.out.println(value.isInput() + " ; " + value.getDisplayedIngredient().getItem().getRegistryName().getPath());
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-             */

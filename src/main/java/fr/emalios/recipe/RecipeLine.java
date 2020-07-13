@@ -4,7 +4,6 @@ import fr.emalios.ingredient.StringIngredient;
 import net.minecraft.item.crafting.Ingredient;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class RecipeLine {

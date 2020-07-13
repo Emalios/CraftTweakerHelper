@@ -1,10 +1,6 @@
 package fr.emalios.recipe;
 
-import fr.emalios.recipe.shapedrecipe.ShapedRecipe;
-
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class Recipes {

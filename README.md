@@ -1,4 +1,4 @@
-# CtHelperMod
+# CraftTweakerHelper
 
 CraftTwealkerHelper (CTH) is mod that simplify life of modpack creator. This mod saves you time.
 

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Recipe {
+public abstract class Recipe {
 
     protected final List<RecipeLine> recipeLines;
     protected StringIngredient output;
@@ -22,6 +22,12 @@ public class Recipe {
         this.recipeLines.add(recipeLine);
     }
 
+    protected abstract String getRecipeType();
+
+    protected abstract String getAction();
+
+    protected abstract String getRecipeTable();
+
     public void setOutput(ItemStack output) {
         if(output.getItem().getRegistryName() == null){
             this.recipeName = "null";
@@ -29,6 +35,11 @@ public class Recipe {
         }
         this.recipeName = output.getItem().getRegistryName().getPath();
         this.output = new StringIngredient(output);
+    }
+
+    @Override
+    public String toString() {
+        return "Recipe{}";
     }
 
     @Override

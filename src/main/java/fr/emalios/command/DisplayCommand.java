@@ -2,17 +2,17 @@ package fr.emalios.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import fr.emalios.recipe.PlayersRecipes;
+import fr.emalios.recipe.PlayerRecipes;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.StringTextComponent;
 
 public class DisplayCommand {
 
-    private final PlayersRecipes playersRecipes;
+    private final PlayerRecipes playerRecipes;
 
-    public DisplayCommand(PlayersRecipes playersRecipes) {
-        this.playersRecipes = playersRecipes;
+    public DisplayCommand(PlayerRecipes playerRecipes) {
+        this.playerRecipes = playerRecipes;
     }
 
     public void register(CommandDispatcher<CommandSource> dispatcher) {
@@ -20,7 +20,7 @@ public class DisplayCommand {
                 .then(LiteralArgumentBuilder.<CommandSource>literal("display")
                         .executes(context -> {
                             PlayerEntity playerEntity = context.getSource().asPlayer();
-                            playerEntity.sendMessage(new StringTextComponent("§7" + this.playersRecipes.getPlayerStringRecipes(playerEntity)));
+                            playerEntity.sendMessage(new StringTextComponent("§7" + this.playerRecipes.toString()));
                             return 1;
                         })
                 )

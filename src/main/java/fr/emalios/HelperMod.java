@@ -1,20 +1,30 @@
 package fr.emalios;
 
+import com.blamejared.crafttweaker.CraftTweaker;
+import com.blamejared.crafttweaker.api.CraftTweakerAPI;
+import com.blamejared.crafttweaker.api.item.IIngredient;
+import com.blamejared.crafttweaker.impl.item.MCIngredientList;
 import fr.emalios.command.ClearCommand;
 import fr.emalios.command.ConfigCommand;
 import fr.emalios.command.CopyCommand;
 import fr.emalios.command.DisplayCommand;
-import fr.emalios.config.PlayersConfig;
-import fr.emalios.recipe.PlayersRecipes;
+import fr.emalios.config.PlayerConfig;
+import fr.emalios.recipe.PlayerRecipes;
 import fr.emalios.recipe.RecipeLine;
-import fr.emalios.recipe.Recipes;
 import fr.emalios.recipe.shapedrecipe.ShapedRecipe;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
 import mezz.jei.gui.recipes.RecipeLayout;
 import mezz.jei.gui.recipes.RecipesGui;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -35,14 +45,14 @@ import java.util.List;
 @Mod("helpermod")
 public class HelperMod {
 
-    private final PlayersRecipes playersRecipes;
-    private final PlayersConfig playersConfig;
+    private final PlayerRecipes playersRecipes;
+    private final PlayerConfig playerConfig;
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     public HelperMod() {
-        this.playersRecipes = new PlayersRecipes();
-        this.playersConfig = new PlayersConfig();
+        this.playersRecipes = new PlayerRecipes();
+        this.playerConfig = new PlayerConfig();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
@@ -61,22 +71,24 @@ public class HelperMod {
 
     private void processIMC(final InterModProcessEvent event) {}
 
+    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public void onServerStarting(FMLServerStartingEvent event) {
         LOGGER.info("CtHelperModLoading...");
-        new ConfigCommand(this.playersConfig).register(event.getCommandDispatcher());
+        new ConfigCommand(this.playerConfig).register(event.getCommandDispatcher());
         new CopyCommand(this.playersRecipes).register(event.getCommandDispatcher());
         new ClearCommand(this.playersRecipes).register(event.getCommandDispatcher());
         new DisplayCommand(this.playersRecipes).register(event.getCommandDispatcher());
     }
 
+    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public void onMouseClickEvent(GuiScreenEvent.MouseClickedEvent.Pre event) {
         Screen gui = event.getGui();
-        PlayerEntity playerEntity = gui.getMinecraft().player;
+        ClientPlayerEntity playerEntity = gui.getMinecraft().player;
         if(playerEntity == null)
             return;
-        if(!this.playersConfig.getPlayerConfig(playerEntity).modActivated)
+        if(!this.playerConfig.modActivated)
             return;
         if (!(gui instanceof RecipesGui))
             return;
@@ -94,19 +106,19 @@ public class HelperMod {
                 return;
             }
             if (recipe instanceof net.minecraft.item.crafting.ShapedRecipe) {
-                processWithShapedRecipe(playerEntity, recipe);
+                processWithShapedRecipe(recipe);
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
-    private void processWithShapedRecipe(PlayerEntity playerEntity, Object recipe) {
+    private void processWithShapedRecipe(Object recipe) {
         net.minecraft.item.crafting.ShapedRecipe shapedRecipe = (net.minecraft.item.crafting.ShapedRecipe) recipe;
         ShapedRecipe stringShapedRecipe = new ShapedRecipe();
         stringShapedRecipe.setOutput(shapedRecipe.getRecipeOutput());
         processThing(shapedRecipe, stringShapedRecipe);
-        this.playersRecipes.addRecipeToPlayer(playerEntity, stringShapedRecipe);
+        this.playersRecipes.addRecipe(stringShapedRecipe);
     }
 
     private void processThing(net.minecraft.item.crafting.ShapedRecipe shapedRecipe, ShapedRecipe stringShapedRecipe) {

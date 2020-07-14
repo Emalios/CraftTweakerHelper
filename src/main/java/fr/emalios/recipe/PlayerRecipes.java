@@ -1,13 +1,15 @@
 package fr.emalios.recipe;
 
+import fr.emalios.recipe.shapedrecipe.ShapedRecipe;
+
 import java.util.HashSet;
 import java.util.Set;
 
-public class Recipes {
+public class PlayerRecipes {
 
-    private final Set<Recipe> recipes;
+    private Set<Recipe> recipes;
 
-    public Recipes() {
+    public PlayerRecipes() {
         this.recipes = new HashSet<>();
     }
 
@@ -15,6 +17,9 @@ public class Recipes {
         this.recipes.add(recipe);
     }
 
+    public void clearRecipes() {
+        this.recipes = new HashSet<>();
+    }
 
     @Override
     public String toString() {

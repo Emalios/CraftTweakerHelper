@@ -1,6 +1,6 @@
-package fr.emalios.recipe.shapelessrecipe;
+package fr.emalios.cth.recipe.shapelessrecipe;
 
-import fr.emalios.recipe.Recipe;
+import fr.emalios.cth.recipe.Recipe;
 
 public class ShapelessRecipe extends Recipe {
 

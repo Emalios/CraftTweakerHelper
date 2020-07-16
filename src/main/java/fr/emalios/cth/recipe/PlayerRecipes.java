@@ -1,6 +1,4 @@
-package fr.emalios.recipe;
-
-import fr.emalios.recipe.shapedrecipe.ShapedRecipe;
+package fr.emalios.cth.recipe;
 
 import java.util.HashSet;
 import java.util.Set;

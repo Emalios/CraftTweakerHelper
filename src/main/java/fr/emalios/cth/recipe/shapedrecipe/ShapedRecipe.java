@@ -1,6 +1,6 @@
-package fr.emalios.recipe.shapedrecipe;
+package fr.emalios.cth.recipe.shapedrecipe;
 
-import fr.emalios.recipe.Recipe;
+import fr.emalios.cth.recipe.Recipe;
 
 public class ShapedRecipe extends Recipe {
 

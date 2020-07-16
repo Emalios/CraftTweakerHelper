@@ -11,9 +11,9 @@ buildscript {
 
 apply plugin: 'net.minecraftforge.gradle'
 
-group = 'fr.emalios'
+group = 'fr.emalios.cth'
 version = '1.0'
-archivesBaseName = 'HelperMod'
+archivesBaseName = 'CraftTweakerHelper'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
@@ -72,7 +72,7 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'helpermod', '--all', '--output', file('src/generated/resources/')
+            args '--mod', 'crafttweakerhelper', '--all', '--output', file('src/generated/resources/')
 
             mods {
                 helpermod {

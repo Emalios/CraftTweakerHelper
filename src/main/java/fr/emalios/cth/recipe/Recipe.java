@@ -1,8 +1,7 @@
-package fr.emalios.recipe;
+package fr.emalios.cth.recipe;
 
-import fr.emalios.ingredient.StringIngredient;
+import fr.emalios.cth.ingredient.StringIngredient;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
 
 import java.util.ArrayList;
 import java.util.List;

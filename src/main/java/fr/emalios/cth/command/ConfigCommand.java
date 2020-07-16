@@ -1,10 +1,10 @@
-package fr.emalios.command;
+package fr.emalios.cth.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import fr.emalios.config.PlayerConfig;
+import fr.emalios.cth.config.PlayerConfig;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.StringTextComponent;

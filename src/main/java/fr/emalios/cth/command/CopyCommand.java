@@ -1,8 +1,8 @@
-package fr.emalios.command;
+package fr.emalios.cth.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import fr.emalios.recipe.PlayerRecipes;
+import fr.emalios.cth.recipe.PlayerRecipes;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.StringTextComponent;

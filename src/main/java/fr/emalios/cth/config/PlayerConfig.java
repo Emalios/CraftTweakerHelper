@@ -1,4 +1,4 @@
-package fr.emalios.config;
+package fr.emalios.cth.config;
 
 public class PlayerConfig {
 

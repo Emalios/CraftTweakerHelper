@@ -1,4 +1,4 @@
-package fr.emalios.ingredient;
+package fr.emalios.cth.ingredient;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;

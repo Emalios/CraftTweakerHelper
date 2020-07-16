@@ -1,33 +1,25 @@
-package fr.emalios;
+package fr.emalios.cth;
 
-import com.blamejared.crafttweaker.CraftTweaker;
-import com.blamejared.crafttweaker.api.CraftTweakerAPI;
-import com.blamejared.crafttweaker.api.item.IIngredient;
-import com.blamejared.crafttweaker.impl.item.MCIngredientList;
-import fr.emalios.command.ClearCommand;
-import fr.emalios.command.ConfigCommand;
-import fr.emalios.command.CopyCommand;
-import fr.emalios.command.DisplayCommand;
-import fr.emalios.config.PlayerConfig;
-import fr.emalios.recipe.PlayerRecipes;
-import fr.emalios.recipe.RecipeLine;
-import fr.emalios.recipe.shapedrecipe.ShapedRecipe;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
+import fr.emalios.cth.command.ClearCommand;
+import fr.emalios.cth.command.ConfigCommand;
+import fr.emalios.cth.command.CopyCommand;
+import fr.emalios.cth.command.DisplayCommand;
+import fr.emalios.cth.config.PlayerConfig;
+import fr.emalios.cth.recipe.PlayerRecipes;
+import fr.emalios.cth.recipe.RecipeLine;
+import fr.emalios.cth.recipe.shapedrecipe.ShapedRecipe;
 import mezz.jei.gui.recipes.RecipeLayout;
 import mezz.jei.gui.recipes.RecipesGui;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -42,15 +34,15 @@ import org.apache.logging.log4j.Logger;
 import java.lang.reflect.Field;
 import java.util.List;
 
-@Mod("helpermod")
-public class HelperMod {
+@Mod("crafttweakerhelper")
+public class CraftTweakerHelper {
 
     private final PlayerRecipes playersRecipes;
     private final PlayerConfig playerConfig;
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public HelperMod() {
+    public CraftTweakerHelper() {
         this.playersRecipes = new PlayerRecipes();
         this.playerConfig = new PlayerConfig();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
@@ -65,6 +57,11 @@ public class HelperMod {
 
     private void doClientStuff(final FMLClientSetupEvent event) {
         LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
+        LOGGER.info("Check dependencies...");
+        if(!ModList.get().isLoaded("crafttweaker")) {
+            LOGGER.error("Craftweaker is missing");
+            event.setCanceled(true);
+        }
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {}

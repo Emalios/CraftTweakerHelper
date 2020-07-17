@@ -58,10 +58,20 @@ public class CraftTweakerHelper {
     private void doClientStuff(final FMLClientSetupEvent event) {
         LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
         LOGGER.info("Check dependencies...");
-        if(!ModList.get().isLoaded("crafttweaker")) {
-            LOGGER.error("Craftweaker is missing");
+        if(!checkDependencies("jei", "crafttweaker")) {
+            LOGGER.error("At least one of dependencies are missing !");
             event.setCanceled(true);
         }
+    }
+
+    private boolean checkDependencies(String... dependencies) {
+        for (String dependency : dependencies) {
+            if(!ModList.get().isLoaded(dependency)) {
+                LOGGER.error("Dependency : " + dependency + " is missing, please add it");
+                return false;
+            }
+        }
+        return true;
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {}

@@ -41,7 +41,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                helpermod {
+                crafttweakerhelper {
                     source sourceSets.main
                 }
             }
@@ -57,7 +57,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                helpermod {
+                crafttweakerhelper {
                     source sourceSets.main
                 }
             }
@@ -75,7 +75,7 @@ minecraft {
             args '--mod', 'crafttweakerhelper', '--all', '--output', file('src/generated/resources/')
 
             mods {
-                helpermod {
+                crafttweakerhelper {
                     source sourceSets.main
                 }
             }
@@ -100,15 +100,13 @@ repositories {
 compileJava.options.encoding = 'UTF-8'
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.2-31.2.5'
-    // compile against the JEI API but do not include it at runtime
-    //compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
-    compile fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
-    compile fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.15.2:6.0.0.13");
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
+    minecraft 'net.minecraftforge:forge:1.15.2-31.2.5'
 
+    compile fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
+    compile fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.15.2:6.0.0.13");
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
     // compile "some.group:artifact:version"

@@ -21,4 +21,9 @@ public class ShapelessZSRecipe extends ZSRecipe {
         return null;
     }
 
+    @Override
+    protected String getRemoveLine() {
+        return null;
+    }
+
 }

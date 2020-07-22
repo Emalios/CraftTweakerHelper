@@ -4,10 +4,11 @@ import com.blamejared.crafttweaker.api.item.IIngredient;
 import com.blamejared.crafttweaker.impl.item.MCIngredientList;
 import com.blamejared.crafttweaker.impl.item.MCItemStack;
 import fr.emalios.cth.config.PlayerConfig;
+import fr.emalios.cth.ingredient.StringTag;
 import fr.emalios.cth.recipe.PlayerRecipes;
+import fr.emalios.cth.recipe.RecipeConverter;
 import fr.emalios.cth.recipe.RecipeLine;
 import fr.emalios.cth.recipe.shapedrecipe.ShapedZSRecipe;
-import fr.emalios.cth.ingredient.StringTag;
 import mezz.jei.gui.recipes.RecipeLayout;
 import mezz.jei.gui.recipes.RecipesGui;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -29,10 +30,12 @@ public class MouseClickListener {
 
     private final PlayerRecipes playerRecipes;
     private final PlayerConfig playerConfig;
+    private final RecipeConverter recipeConverter;
 
     public MouseClickListener(PlayerRecipes playerRecipes, PlayerConfig playerConfig) {
         this.playerRecipes = playerRecipes;
         this.playerConfig = playerConfig;
+        this.recipeConverter = new RecipeConverter(playerConfig);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -75,10 +78,10 @@ public class MouseClickListener {
     private void processWithShapedRecipe(Object recipe) {
         ShapedRecipe shapedRecipe = (ShapedRecipe) recipe;
         System.out.println(shapedRecipe.getId().toString());
-        ShapedZSRecipe stringShapedRecipe = new ShapedZSRecipe();
-        stringShapedRecipe.setOutput(new MCItemStack(shapedRecipe.getRecipeOutput()));
-        convertRecipe(shapedRecipe, stringShapedRecipe);
-        this.playerRecipes.addRecipe(stringShapedRecipe);
+        ShapedZSRecipe zsRecipe = new ShapedZSRecipe();
+        zsRecipe.setOutput(new MCItemStack(shapedRecipe.getRecipeOutput()));
+        convertRecipe(shapedRecipe, zsRecipe);
+        this.playerRecipes.addRecipe(zsRecipe);
     }
 
     private void convertRecipe(ShapedRecipe shapedRecipe, ShapedZSRecipe stringShapedRecipe) {

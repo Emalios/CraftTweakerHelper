@@ -1,6 +1,5 @@
 package fr.emalios.cth.recipe;
 
-import com.blamejared.crafttweaker.api.item.IIngredient;
 import com.blamejared.crafttweaker.impl.item.MCItemStack;
 
 import java.util.ArrayList;
@@ -10,7 +9,7 @@ import java.util.Objects;
 public abstract class ZSRecipe {
 
     protected final List<RecipeLine> recipeLines;
-    protected IIngredient output;
+    protected MCItemStack output;
     protected String recipeName;
 
     public ZSRecipe() {
@@ -49,4 +48,6 @@ public abstract class ZSRecipe {
     public int hashCode() {
         return Objects.hash(recipeName);
     }
+
+    protected abstract String getRemoveLine();
 }

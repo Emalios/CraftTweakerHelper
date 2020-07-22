@@ -25,10 +25,10 @@ public class RecipeLine {
         StringBuilder builder = new StringBuilder("[");
         for (int i = 0; i < this.ingredients.size(); i++) {
             if(i == this.ingredients.size()-1) {
-                builder.append(this.ingredients.get(i)).append("]");
+                builder.append(this.ingredients.get(i).getCommandString()).append("]");
                 continue;
             }
-            builder.append(this.ingredients.get(i)).append(", ");
+            builder.append(this.ingredients.get(i).getCommandString()).append(", ");
         }
         return builder.toString();
     }

@@ -1,10 +1,10 @@
 package fr.emalios.cth.recipe.shapelessrecipe;
 
-import fr.emalios.cth.recipe.Recipe;
+import fr.emalios.cth.recipe.ZSRecipe;
 
-public class ShapelessRecipe extends Recipe {
+public class ShapelessZSRecipe extends ZSRecipe {
 
-    public ShapelessRecipe() { super(); }
+    public ShapelessZSRecipe() { super(); }
 
     @Override
     protected String getRecipeType() {

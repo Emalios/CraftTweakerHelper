@@ -106,7 +106,7 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.15.2-31.2.5'
 
     compile fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
-    compile fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.15.2:6.0.0.13");
+    compile "com.blamejared.crafttweaker:CraftTweaker-1.15.2:6.0.0.13";
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
     // compile "some.group:artifact:version"

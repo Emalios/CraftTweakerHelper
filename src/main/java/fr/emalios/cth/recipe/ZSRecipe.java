@@ -1,19 +1,19 @@
 package fr.emalios.cth.recipe;
 
-import fr.emalios.cth.ingredient.StringIngredient;
-import net.minecraft.item.ItemStack;
+import com.blamejared.crafttweaker.api.item.IIngredient;
+import com.blamejared.crafttweaker.impl.item.MCItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class Recipe {
+public abstract class ZSRecipe {
 
     protected final List<RecipeLine> recipeLines;
-    protected StringIngredient output;
+    protected IIngredient output;
     protected String recipeName;
 
-    public Recipe() {
+    public ZSRecipe() {
         this.recipeLines = new ArrayList<>();
     }
 
@@ -27,26 +27,22 @@ public abstract class Recipe {
 
     protected abstract String getRecipeTable();
 
-    public void setOutput(ItemStack output) {
-        if(output.getItem().getRegistryName() == null){
-            this.recipeName = "null";
-            return;
-        }
-        this.recipeName = output.getItem().getRegistryName().getPath();
-        this.output = new StringIngredient(output);
+    public void setOutput(MCItemStack output) {
+        this.recipeName = output.getDisplayName().replace(" ", "_").toLowerCase();
+        this.output = output;
     }
 
     @Override
     public String toString() {
-        return "Recipe{}";
+        return "ZSRecipe";
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Recipe recipe = (Recipe) o;
-        return Objects.equals(recipeName, recipe.recipeName);
+        ZSRecipe ZSRecipe = (ZSRecipe) o;
+        return Objects.equals(recipeName, ZSRecipe.recipeName);
     }
 
     @Override

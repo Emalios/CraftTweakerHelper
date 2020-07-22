@@ -1,30 +1,24 @@
 package fr.emalios.cth.recipe;
 
-import fr.emalios.cth.ingredient.StringIngredient;
-import net.minecraft.item.crafting.Ingredient;
+import com.blamejared.crafttweaker.api.item.IIngredient;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RecipeLine {
 
-    private final List<StringIngredient> ingredients;
+    private final List<IIngredient> ingredients;
 
     public RecipeLine() {
         this.ingredients = new ArrayList<>();
     }
 
-    public void addIngredient(Ingredient ingredient) {
-        this.ingredients.add(new StringIngredient(ingredient));
+    public void addIngredient(IIngredient ingredient) {
+        this.ingredients.add(ingredient);
     }
 
-    public void addIngredient(String ingredient) {
-        this.ingredients.add(new StringIngredient(ingredient));
-    }
-
-    @Override
-    public String toString() {
-        return this.getLine();
+    public List<IIngredient> getIngredients() {
+        return this.ingredients;
     }
 
     private String getLine() {
@@ -37,6 +31,11 @@ public class RecipeLine {
             builder.append(this.ingredients.get(i)).append(", ");
         }
         return builder.toString();
+    }
+
+    @Override
+    public String toString() {
+        return this.getLine();
     }
 
 }

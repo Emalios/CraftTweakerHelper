@@ -1,10 +1,10 @@
 package fr.emalios.cth.recipe.shapedrecipe;
 
-import fr.emalios.cth.recipe.Recipe;
+import fr.emalios.cth.recipe.ZSRecipe;
 
-public class ShapedRecipe extends Recipe {
+public class ShapedZSRecipe extends ZSRecipe {
 
-    public ShapedRecipe() {
+    public ShapedZSRecipe() {
         super();
     }
 

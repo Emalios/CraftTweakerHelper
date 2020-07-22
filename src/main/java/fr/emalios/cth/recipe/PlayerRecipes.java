@@ -5,25 +5,25 @@ import java.util.Set;
 
 public class PlayerRecipes {
 
-    private Set<Recipe> recipes;
+    private Set<ZSRecipe> ZSRecipes;
 
     public PlayerRecipes() {
-        this.recipes = new HashSet<>();
+        this.ZSRecipes = new HashSet<>();
     }
 
-    public void addRecipe(Recipe recipe) {
-        this.recipes.add(recipe);
+    public void addRecipe(ZSRecipe ZSRecipe) {
+        this.ZSRecipes.add(ZSRecipe);
     }
 
     public void clearRecipes() {
-        this.recipes = new HashSet<>();
+        this.ZSRecipes = new HashSet<>();
     }
 
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Recipe recipe : recipes) {
-            stringBuilder.append(recipe).append("\n");
+        for (ZSRecipe ZSRecipe : ZSRecipes) {
+            stringBuilder.append(ZSRecipe).append("\n");
         }
         return stringBuilder.toString();
     }

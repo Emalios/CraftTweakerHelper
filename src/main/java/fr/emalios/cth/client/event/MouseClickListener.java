@@ -1,15 +1,21 @@
 package fr.emalios.cth.client.event;
 
+import com.blamejared.crafttweaker.api.item.IIngredient;
+import com.blamejared.crafttweaker.impl.item.MCIngredientList;
+import com.blamejared.crafttweaker.impl.item.MCItemStack;
 import fr.emalios.cth.config.PlayerConfig;
 import fr.emalios.cth.recipe.PlayerRecipes;
 import fr.emalios.cth.recipe.RecipeLine;
-import fr.emalios.cth.recipe.shapedrecipe.ShapedRecipe;
+import fr.emalios.cth.recipe.shapedrecipe.ShapedZSRecipe;
+import fr.emalios.cth.ingredient.StringTag;
 import mezz.jei.gui.recipes.RecipeLayout;
 import mezz.jei.gui.recipes.RecipesGui;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.ShapedRecipe;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -53,7 +59,8 @@ public class MouseClickListener {
                 System.out.println("recipe null");
                 return;
             }
-            if (recipe instanceof net.minecraft.item.crafting.ShapedRecipe) {
+            if (recipe instanceof ShapedRecipe) {
+                notifyPlayer(playerEntity);
                 processWithShapedRecipe(recipe);
             }
         } catch (IllegalAccessException e) {
@@ -61,15 +68,20 @@ public class MouseClickListener {
         }
     }
 
+    private void notifyPlayer(ClientPlayerEntity playerEntity) {
+        playerEntity.sendStatusMessage(new StringTextComponent("§cYou have been copy recipe"), false);
+    }
+
     private void processWithShapedRecipe(Object recipe) {
-        net.minecraft.item.crafting.ShapedRecipe shapedRecipe = (net.minecraft.item.crafting.ShapedRecipe) recipe;
-        ShapedRecipe stringShapedRecipe = new ShapedRecipe();
-        stringShapedRecipe.setOutput(shapedRecipe.getRecipeOutput());
-        processThing(shapedRecipe, stringShapedRecipe);
+        ShapedRecipe shapedRecipe = (ShapedRecipe) recipe;
+        System.out.println(shapedRecipe.getId().toString());
+        ShapedZSRecipe stringShapedRecipe = new ShapedZSRecipe();
+        stringShapedRecipe.setOutput(new MCItemStack(shapedRecipe.getRecipeOutput()));
+        convertRecipe(shapedRecipe, stringShapedRecipe);
         this.playerRecipes.addRecipe(stringShapedRecipe);
     }
 
-    private void processThing(net.minecraft.item.crafting.ShapedRecipe shapedRecipe, ShapedRecipe stringShapedRecipe) {
+    private void convertRecipe(ShapedRecipe shapedRecipe, ShapedZSRecipe stringShapedRecipe) {
         NonNullList<Ingredient> list = shapedRecipe.getIngredients();
         int numberOfLines = shapedRecipe.getRecipeHeight();
         int numberOfColumn = shapedRecipe.getRecipeWidth();
@@ -78,13 +90,21 @@ public class MouseClickListener {
             for (int j = 0; j < numberOfColumn; j++) {
                 int index = j + numberOfColumn*i;
                 if(isEmpty(index, list)) {
-                    recipeLine.addIngredient("<item:minecraft:air>");
                     continue;
                 }
-                recipeLine.addIngredient(list.get(index));
+                addIngredientToRecipeLine(recipeLine, list.get(index));
             }
             stringShapedRecipe.addRecipeLine(recipeLine);
         }
+    }
+
+    private void addIngredientToRecipeLine(RecipeLine recipeLine, Ingredient ingredient) {
+        IIngredient iIngredient = IIngredient.fromIngredient(ingredient);
+        if(iIngredient instanceof MCIngredientList) {
+            recipeLine.addIngredient(new StringTag(ingredient));
+            return;
+        }
+        recipeLine.addIngredient((MCItemStack) iIngredient);
     }
 
     private boolean isEmpty(int index, NonNullList<Ingredient> list) {
